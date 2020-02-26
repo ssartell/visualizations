@@ -1,15 +1,33 @@
 let canvas = document.getElementById('canvas');
 
-let width = canvas.width;
-let height = canvas.height;
+let width, height;
 
-let verts = [];
-let edges = [];
-let drawn = 0;
+let verts, edges, drawn;
 let growRate = 1;
-verts.push({x: width / 2, y: height / 2});
 
-window.requestAnimationFrame(growTree);
+window.addEventListener('resize', resetTree, false);
+initTree();
+
+function initTree() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    width = canvas.width;
+    height = canvas.height;
+
+    verts = [];
+    edges = [];
+    drawn = 0;
+    verts.push({x: width / 2, y: height / 2});
+    window.requestAnimationFrame(growTree);
+}
+
+function resetTree() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    initTree();
+}
 
 function growTree() {
     for(let i = 0; i < 50; i++) {
