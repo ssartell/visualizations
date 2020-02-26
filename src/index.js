@@ -3,15 +3,6 @@ let canvas = document.getElementById('canvas');
 let width = canvas.width;
 let height = canvas.height;
 
-// if (canvas.getContext) {
-//     var ctx = canvas.getContext('2d');
-    
-//     ctx.beginPath();
-//     ctx.moveTo(0, 0);
-//     ctx.lineTo(canvas.width, canvas.height);
-//     ctx.stroke();
-// }
-
 let verts = [];
 let edges = [];
 let drawn = 0;
