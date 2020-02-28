@@ -1,4 +1,4 @@
-import Vector2 from './vector2';
+import Vector2 from './vector2.js';
 
 export default class Rectangle {
     constructor(x, y, width, height) {
@@ -16,7 +16,7 @@ export default class Rectangle {
             && this.y <= point.y && point.y <= this.y + this.height;
     }
 
-    distanceToPoint(point) {
+    distanceFrom(point) {
         let p = point.subtract(this.center).abs;
         let px = Math.max(0, p.x - this.halfWidth);
         let py = Math.max(0, p.y - this.halfHeight);

@@ -1,5 +1,6 @@
-import Vector2 from './vector2';
+import Vector2 from '../vector2';
 import Rrt from './rapidly-exploring-random-tree';
+import { Vector } from 'mnemonist';
 
 let canvas = document.getElementById('canvas');
 canvas.width = window.innerWidth;
@@ -13,7 +14,10 @@ window.addEventListener('resize', resetTree, false);
 initTree();
 
 function initTree() {
-    rrt = new Rrt([new Vector2(canvas.width / 2, canvas.height / 2)], canvas.width, canvas.height);
+    rrt = new Rrt([
+        new Vector2(canvas.width / 4, canvas.height / 4),
+        new Vector2(canvas.width / 4 * 3, canvas.height / 4 * 3)
+    ], canvas.width, canvas.height);
     drawn = 0;
     window.requestAnimationFrame(growTree);
 }
@@ -27,9 +31,9 @@ function resetTree() {
 }
 
 function growTree() {
-    for(let i = 0; i < 20; i++) {
+    for(let i = 0; i < 200; i++) {
         let point = new Vector2(Math.random() * canvas.width, Math.random() * canvas.height);
-        rrt.grow(point, 1);
+        rrt.grow(point, growthRate);
     }
     draw();
     window.requestAnimationFrame(growTree);
@@ -41,8 +45,8 @@ function draw() {
         
         for(let i = drawn; i < rrt.edges.length; i++) {
             let edge = rrt.edges[i];
-            let a = rrt.verts[edge[0]];
-            let b = rrt.verts[edge[1]];
+            let a = edge[0];
+            let b = edge[1];
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
@@ -51,6 +55,11 @@ function draw() {
 
         drawn = rrt.edges.length;
         
-        if (drawn === 5000) rrt.quadtree.draw(ctx);
+        if (drawn === 200) {
+            rrt.quadtree.draw(ctx);
+            console.log(rrt.quadtree.depth);
+            let neighbors = rrt.quadtree.findNearestNeighbors(new Vector2(0, 0));
+            console.log(Array.from(neighbors).map(x => x.magnitude));
+        }
     }
 }

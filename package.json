@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server",
-    "build": "npx webpack",
+    "start": "webpack-dev-server --env.proj=rrt",
+    "start:poisson": "webpack-dev-server --env.proj=poisson",
+    "build": "npx webpack --env.proj=rrt",
+    "build:poisson": "npx webpack --env.proj=poisson",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,5 +25,8 @@
     "webpack": "^4.41.6",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"
+  },
+  "dependencies": {
+    "mnemonist": "^0.32.0"
   }
 }
