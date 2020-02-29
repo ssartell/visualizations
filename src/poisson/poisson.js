@@ -26,6 +26,8 @@ export default class Poisson {
             let i = Math.floor(Math.random() * this.activePoints.length);
             let active = this.activePoints[i];
 
+            let nearest = this.quadtree.findNearestKNeighbors(active, 20);
+
             for (let j = 0; j < 30; j++) {
                 let a = Math.random() * 2 * Math.PI;
                 let rad = this.r * (1 + Math.random());
@@ -33,20 +35,23 @@ export default class Poisson {
                 let p = new Vector2(rad * Math.cos(a) + active.x, rad * Math.sin(a) + active.y);
                 if (!this.bounds.contains(p)) continue;
 
-                let nearestPoint = this.quadtree.findNearestNeighbor(p);
-                let dist = nearestPoint.subtract(p).sqrMagnitude;
-                if (dist > this.r2) {
+                //let nearestPoint = this.quadtree.findNearestNeighbor(p);
+
+                //let dist = nearestPoint.subtract(p).sqrMagnitude;
+                if (nearest.every(x => x.subtract(p).sqrMagnitude > this.r2)) {
+                //if (dist > this.r2) {
                     this.points.push(p);
                     this.activePoints.push(p);
                     this.quadtree.addPoint(p);
+                    nearest.push(p);
                     wasPointAdded = true;
-                    break;
                 }
             }
 
-            if (!wasPointAdded) {
-                this.activePoints.splice(i, 1);
-            }
+            this.activePoints.splice(i, 1);
+            // if (!wasPointAdded) {
+                
+            // }
         }
     }
 }
