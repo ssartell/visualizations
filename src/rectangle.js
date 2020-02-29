@@ -17,9 +17,13 @@ export default class Rectangle {
     }
 
     distanceFrom(point) {
+        return Math.sqrt(this.sqrDistanceFrom(point));
+    }
+
+    sqrDistanceFrom(point) {
         let p = point.subtract(this.center).abs;
         let px = Math.max(0, p.x - this.halfWidth);
         let py = Math.max(0, p.y - this.halfHeight);
-        return Math.sqrt(px * px + py * py);
+        return px * px + py * py;
     }
 }

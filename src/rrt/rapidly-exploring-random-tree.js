@@ -14,6 +14,7 @@ export default class RapidlyExploringRandomTree {
 
     grow(point, growthRate) {
         let closest = this.quadtree.findNearestNeighbor(point);
+        //let closest = this.quadtree.findNearestNeighbors(point).next().value;
         let vec = point.subtract(closest);
         let dir = null;
         if (this.gridAligned) {

@@ -9,6 +9,7 @@ canvas.height = window.innerHeight;
 let rrt;
 let drawn = 0;
 let growthRate = 1;
+let startDate = new Date();
 
 window.addEventListener('resize', resetTree, false);
 initTree();
@@ -31,7 +32,7 @@ function resetTree() {
 }
 
 function growTree() {
-    for(let i = 0; i < 200; i++) {
+    for(let i = 0; i < 1000; i++) {
         let point = new Vector2(Math.random() * canvas.width, Math.random() * canvas.height);
         rrt.grow(point, growthRate);
     }
@@ -54,9 +55,13 @@ function draw() {
         }
 
         drawn = rrt.edges.length;
+
+        if (drawn % 1000000 === 0) {
+            console.log(`${drawn}: ${(new Date() - startDate) / 1000}s`);
+        }
         
         if (drawn === 200) {
-            rrt.quadtree.draw(ctx);
+            //rrt.quadtree.draw(ctx);
             console.log(rrt.quadtree.depth);
             let neighbors = rrt.quadtree.findNearestNeighbors(new Vector2(0, 0));
             console.log(Array.from(neighbors).map(x => x.magnitude));

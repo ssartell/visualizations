@@ -24,6 +24,10 @@ export default class Vector2 {
         return new Vector2(this.x * scalar, this.y * scalar);
     }
 
+    sqrDistanceFrom(point) {
+        return this.subtract(point).sqrMagnitude;
+    }
+
     distanceFrom(point) {
         return this.subtract(point).magnitude;
     }
