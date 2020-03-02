@@ -2,20 +2,26 @@ import Vector2 from '../vector2';
 import Rectangle from '../rectangle';
 import Quadtree from '../quadtree';
 import Poisson from './poisson';
+import PoissonGrid from './poissonGrid';
 
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
+var scale = window.devicePixelRatio || 1;
+ctx.scale(scale, scale);
 let drawn = 0;
 let bounds, poisson;
 
-window.requestAnimationFrame(expand);
 window.addEventListener('resize', init, false);
 init();
 
 function init() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    bounds = new Rectangle(0, 0, canvas.width, canvas.height);
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    bounds = new Rectangle(0, 0, width * scale, height * scale);
     poisson = new Poisson(5, bounds);
     drawn = 0;
     window.requestAnimationFrame(expand);
@@ -23,13 +29,16 @@ function init() {
 
 function expand() {
     let count = 0;
-    while(poisson.canExpand() && count < 10) {
+    while(poisson.canExpand() && count < 20) {
         poisson.expand();
         count++;
     }
     draw();
-    if (poisson.canExpand())
+    if (poisson.canExpand()) {
         window.requestAnimationFrame(expand);
+    } else {
+        console.log(`points: ${drawn}`);
+    }
 }
 
 function draw() {

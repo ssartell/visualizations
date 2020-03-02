@@ -1,18 +1,24 @@
 import Vector2 from '../vector2';
 import Rectangle from '../rectangle';
-import Quadtree from '../quadtree';
 
-export default class Poisson {
+export default class PoissonGrid {
     constructor(radius, bounds) {
         this.radius = radius;
         this.sqrRadius = radius * radius;
+        this.cellSize = radius / Math.sqrt(2);
         this.bounds = bounds;
 
         let startingPoint = new Vector2(bounds.width / 2, bounds.height / 2);
         this.points = [startingPoint];
         this.spawnPoints = [startingPoint];
-        this.quadtree = new Quadtree(bounds);
-        this.quadtree.addPoint(startingPoint);
+
+        // init grid
+        let rows = Math.ceil(bounds.width / this.cellSize);
+        let cols = Math.ceil(bounds.height / this.cellSize);
+        this.grid = new Array(Math.ceil(rows));
+        for(let i = 0; i < this.grid.length; i++) {
+            this.grid[i] = new Array(cols);
+        }
     }
 
     canExpand() {
@@ -34,7 +40,7 @@ export default class Poisson {
                 if (this.isValid(candidate)) {
                     this.points.push(candidate);
                     this.spawnPoints.push(candidate);
-                    this.quadtree.addPoint(candidate);
+                    this.grid[Math.floor(candidate.x / this.cellSize)][Math.floor(candidate.y / this.cellSize)] = this.points.length - 1;
                     candidateAccepted = true;
                 }
             }
@@ -48,9 +54,24 @@ export default class Poisson {
     isValid(candidate) {
         if (!this.bounds.contains(candidate)) return false;
 
-        let nearestPoint = this.quadtree.findNearestNeighbor(candidate);
-        let sqrDist = nearestPoint.subtract(candidate).sqrMagnitude;
+        let cellX = Math.floor(candidate.x / this.cellSize);
+        let cellY = Math.floor(candidate.y / this.cellSize);
+        let minX = Math.max(0, cellX - 2);
+        let maxX = Math.min(cellX + 2, this.grid.length - 1);
+        let minY = Math.max(0, cellY - 2);
+        let maxY = Math.min(cellY + 2, this.grid[0].length - 1);
 
-        return sqrDist > this.sqrRadius
+        for(let x = minX; x <= maxX; x++) {
+            for(let y = minY; y <= maxY; y++) {
+                let index = this.grid[x][y];
+                if (index !== undefined) {
+                    let dist = candidate.subtract(this.points[index]).sqrMagnitude;
+                    if (dist < this.sqrRadius) {
+                        return false;
+                    }
+                }
+            }    
+        }
+        return true;
     }
 }

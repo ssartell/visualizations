@@ -21,9 +21,8 @@ export default class Rectangle {
     }
 
     sqrDistanceFrom(point) {
-        let p = point.subtract(this.center).abs;
-        let px = Math.max(0, p.x - this.halfWidth);
-        let py = Math.max(0, p.y - this.halfHeight);
+        let px = Math.max(0, Math.abs(point.x - this.center.x) - this.halfWidth);
+        let py = Math.max(0, Math.abs(point.y - this.center.y) - this.halfHeight);
         return px * px + py * py;
     }
 }

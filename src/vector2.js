@@ -32,6 +32,10 @@ export default class Vector2 {
         return this.subtract(point).magnitude;
     }
 
+    manhattanDistanceFrom(point) {
+        return Math.abs(this.x - point.x) + Math.abs(this.y - point.y);
+    }
+
     get sqrMagnitude() {
         return this.x * this.x + this.y * this.y;
     }

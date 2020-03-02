@@ -1,6 +1,7 @@
 import Vector2 from './vector2.js';
 import Rectangle from './rectangle.js';
 import { MinHeap } from 'mnemonist';
+import PriorityQueue from 'fastpriorityqueue';
 
 export default class Quadtree {
     constructor(rect) {
@@ -14,15 +15,15 @@ export default class Quadtree {
 
     findNearestNeighbor(point) {
         let squares = [this.root];
-        let dist = Infinity;
+        let closestDist = Infinity;
         let closest = null;
 
-        for(let i = 1; i <= this.depth; i++) {
+        for(let i = 0; i < this.depth; i++) {
             for(let square of squares) {
-                if (square.point) {
-                    let newDist = square.point.sqrDistanceFrom(point);
-                    if (newDist < dist) {
-                        dist = newDist;
+                if (square.hasPoint()) {
+                    let dist = square.point.sqrDistanceFrom(point);
+                    if (dist < closestDist) {
+                        closestDist = dist;
                         closest = square.point;
                     }
                 }
@@ -30,18 +31,53 @@ export default class Quadtree {
 
             let newSquares = [];
             for(let square of squares) {
-                if (square.children) {
+                if (!square.isLeaf()) {
                     for(let child of square.children) {
-                        if (child.bounds.sqrDistanceFrom(point) <= dist) {
+                        if (child.bounds.sqrDistanceFrom(point) <= closestDist) {
                             newSquares.push(child);
                         }
                     }
                 }                
             }
             squares = newSquares;
+            if (squares.length === 0) break;
         }
+
         return closest;
     }
+
+    // findNearestNeighbor(point) {
+    //     return this.findNearestNeighbors(point).next().value;
+    // }
+
+    // findNearestNeighbor(point) {
+    //     let queue = new PriorityQueue((a, b) => a.sqrDistanceFrom(point) < b.sqrDistanceFrom(point));
+    //     queue.add(this.root);
+
+    //     while(queue.peek()) {
+    //         let element = queue.poll();
+    //         if (element instanceof Square) {
+    //             if (element.point) queue.add(element.point);
+    //             if (element.isLeaf()) continue;
+
+    //             for(let child of element.children) {
+    //                 queue.add(child);
+    //             }
+    //         } else if (element instanceof Vector2) {                   
+    //             return element;
+    //         }
+    //     }
+    // }
+
+    // findNearestNeighborInner(point, square) {
+    //     if (square.isLeaf()) {
+    //         if (square.point.manhattanDistanceFrom(point) < best) {
+                
+    //         }
+    //     } else {
+
+    //     }
+    // }
 
     findNearestKNeighbors(point, k) {
         let i = 0;
@@ -56,24 +92,45 @@ export default class Quadtree {
         return neighbors;
     }
 
+
+
     *findNearestNeighbors(point) {
-        let queue = new MinHeap((a, b) => a.sqrDistanceFrom(point) - b.sqrDistanceFrom(point));
-        queue.push(this.root);
+        let queue = new PriorityQueue((a, b) => a.sqrDistanceFrom(point) < b.sqrDistanceFrom(point));
+        queue.add(this.root);
 
         while(queue.peek()) {
-            let element = queue.pop();
+            let element = queue.poll();
             if (element instanceof Square) {
-                if (element.point) queue.push(element.point);
+                if (element.point) queue.add(element.point);
                 if (element.isLeaf()) continue;
 
                 for(let child of element.children) {
-                    queue.push(child);
+                    queue.add(child);
                 }
             } else if (element instanceof Vector2) {                   
                 yield element;
             }
         }
     }
+
+    // *findNearestNeighbors(point) {
+    //     let queue = new MinHeap((a, b) => a.sqrDistanceFrom(point) - b.sqrDistanceFrom(point));
+    //     queue.push(this.root);
+
+    //     while(queue.peek()) {
+    //         let element = queue.pop();
+    //         if (element instanceof Square) {
+    //             if (element.point) queue.push(element.point);
+    //             if (element.isLeaf()) continue;
+
+    //             for(let child of element.children) {
+    //                 queue.push(child);
+    //             }
+    //         } else if (element instanceof Vector2) {                   
+    //             yield element;
+    //         }
+    //     }
+    // }
 
     draw(ctx) {
         this.root.draw(ctx);
@@ -98,10 +155,14 @@ class Square {
         return this.bounds.sqrDistanceFrom(point);
     }
 
+    hasPoint() {
+        return this.point !== undefined;
+    }
+
     addPoint(point) {
         if (!this.bounds.contains(point)) return this.depth;
 
-        if (!this.point) {
+        if (!this.hasPoint()) {
             this.point = point;
             return this.depth;
         } else {
