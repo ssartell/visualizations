@@ -5,9 +5,6 @@ import Poisson from './poisson';
 import PoissonGrid from './poissonGrid';
 
 let canvas = document.getElementById('canvas');
-let ctx = canvas.getContext('2d');
-var scale = window.devicePixelRatio || 1;
-ctx.scale(scale, scale);
 let drawn = 0;
 let bounds, poisson;
 
@@ -19,9 +16,15 @@ function init() {
     let height = window.innerHeight;
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
+
+    let scale = window.devicePixelRatio || 1;
     canvas.width = width * scale;
     canvas.height = height * scale;
-    bounds = new Rectangle(0, 0, width * scale, height * scale);
+
+    let ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+    
+    bounds = new Rectangle(0, 0, width, height);
     poisson = new Poisson(5, bounds);
     drawn = 0;
     window.requestAnimationFrame(expand);
@@ -29,7 +32,7 @@ function init() {
 
 function expand() {
     let count = 0;
-    while(poisson.canExpand() && count < 20) {
+    while(poisson.canExpand() && count < 100) {
         poisson.expand();
         count++;
     }
@@ -42,6 +45,7 @@ function expand() {
 }
 
 function draw() {
+    let ctx = canvas.getContext('2d');
     for(let i = drawn; i < poisson.points.length; i++) {
         let point = poisson.points[i];
         ctx.beginPath();

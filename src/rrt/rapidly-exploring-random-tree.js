@@ -4,6 +4,8 @@ import Vector2 from '../vector2.js';
 
 export default class RapidlyExploringRandomTree {
     constructor(points, width, height, gridAligned = false) {
+        this.width = width;
+        this.height = height;
         this.edges = [];
         this.quadtree = new Quadtree(new Rectangle(0, 0, width, height));
         for(let point of points) {
@@ -30,6 +32,6 @@ export default class RapidlyExploringRandomTree {
         let newVert = closest.add(dir);
 
         this.edges.push([closest, newVert]);
-        this.quadtree.addPoint(newVert);
+        this.quadtree.add(newVert);
     }
 }

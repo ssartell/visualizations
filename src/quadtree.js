@@ -9,8 +9,8 @@ export default class Quadtree {
         this.depth = 1;
     }
 
-    addPoint(point) {
-        this.depth = Math.max(this.depth, this.root.addPoint(point));
+    add(point) {
+        this.depth = Math.max(this.depth, this.root.add(point));
     }
 
     findNearestNeighbor(point) {
@@ -33,7 +33,7 @@ export default class Quadtree {
             for(let square of squares) {
                 if (!square.isLeaf()) {
                     for(let child of square.children) {
-                        if (child.bounds.sqrDistanceFrom(point) <= closestDist) {
+                        if (child.sqrDistanceFrom(point) <= closestDist) {
                             newSquares.push(child);
                         }
                     }
@@ -159,7 +159,7 @@ class Square {
         return this.point !== undefined;
     }
 
-    addPoint(point) {
+    add(point) {
         if (!this.bounds.contains(point)) return this.depth;
 
         if (!this.hasPoint()) {
@@ -170,7 +170,7 @@ class Square {
                 this.children = this.split();
             }
                     
-            return this.children.find(x => x.contains(point)).addPoint(point);
+            return this.children.find(x => x.contains(point)).add(point);
         }
     }
 

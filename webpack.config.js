@@ -15,6 +15,7 @@ module.exports = env => ({
             { test: /\.txt$/, use: 'raw-loader' }
         ]
     },
+    devtool: 'none',
     plugins: [
         new HtmlWebpackPlugin({ template: `./src/${env.proj}/index.html` }),
     ]

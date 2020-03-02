@@ -12,7 +12,7 @@ export default class Poisson {
         this.points = [startingPoint];
         this.spawnPoints = [startingPoint];
         this.quadtree = new Quadtree(bounds);
-        this.quadtree.addPoint(startingPoint);
+        this.quadtree.add(startingPoint);
     }
 
     canExpand() {
@@ -23,34 +23,29 @@ export default class Poisson {
         let candidateAccepted = false;
 
         while (!candidateAccepted && this.canExpand()) {
-            let i = Math.floor(Math.random() * this.spawnPoints.length);
-            let spawn = this.spawnPoints[i];
+            let spawn = this.spawnPoints.pop();
 
             for (let j = 0; j < 30; j++) {
-                let a = Math.random() * 2 * Math.PI;
-                let rad = this.radius * (1 + Math.random());
-                let candidate = new Vector2(rad * Math.cos(a) + spawn.x, rad * Math.sin(a) + spawn.y);
+                let angle = 2 * Math.PI * Math.random();
+                let radius = this.radius * (1 + Math.random());
+                let candidate = new Vector2(radius * Math.cos(angle) + spawn.x, radius * Math.sin(angle) + spawn.y);
 
                 if (this.isValid(candidate)) {
                     this.points.push(candidate);
                     this.spawnPoints.push(candidate);
-                    this.quadtree.addPoint(candidate);
+                    this.quadtree.add(candidate);
                     candidateAccepted = true;
                 }
-            }
-
-            if (!candidateAccepted) {
-                this.spawnPoints.splice(i, 1);
             }
         }
     }
 
     isValid(candidate) {
         if (!this.bounds.contains(candidate)) return false;
-
+        
         let nearestPoint = this.quadtree.findNearestNeighbor(candidate);
         let sqrDist = nearestPoint.subtract(candidate).sqrMagnitude;
-
-        return sqrDist > this.sqrRadius
+        
+        return sqrDist > this.sqrRadius;
     }
 }
