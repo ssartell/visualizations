@@ -23,7 +23,7 @@ export default class Poisson {
         let candidateAccepted = false;
 
         while (!candidateAccepted && this.canExpand()) {
-            let spawn = this.spawnPoints.pop();
+            let spawn = this.spawnPoints.shift();
 
             for (let j = 0; j < 30; j++) {
                 let angle = 2 * Math.PI * Math.random();
@@ -43,9 +43,10 @@ export default class Poisson {
     isValid(candidate) {
         if (!this.bounds.contains(candidate)) return false;
         
-        let nearestPoint = this.quadtree.findNearestNeighbor(candidate);
-        let sqrDist = nearestPoint.subtract(candidate).sqrMagnitude;
+        return !this.quadtree.anyPointWithin(candidate, this.radius);
+        //let nearestPoint = this.quadtree.findNearestNeighbor(candidate);
+        //let sqrDist = nearestPoint.subtract(candidate).sqrMagnitude;
         
-        return sqrDist > this.sqrRadius;
+        //return sqrDist > this.sqrRadius;
     }
 }

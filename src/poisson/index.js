@@ -7,11 +7,13 @@ import PoissonGrid from './poissonGrid';
 let canvas = document.getElementById('canvas');
 let drawn = 0;
 let bounds, poisson;
+let timeStamp;
 
 window.addEventListener('resize', init, false);
 init();
 
 function init() {
+    timeStamp = performance.now();
     let width = window.innerWidth;
     let height = window.innerHeight;
     canvas.style.width = `${width}px`;
@@ -41,6 +43,8 @@ function expand() {
         window.requestAnimationFrame(expand);
     } else {
         console.log(`points: ${drawn}`);
+        console.log(`time: ${Math.round(performance.now() - timeStamp)}ms`);
+        poisson.quadtree.log();
     }
 }
 
@@ -50,8 +54,6 @@ function draw() {
         let point = poisson.points[i];
         ctx.beginPath();
         ctx.fillRect(Math.floor(point.x), Math.floor(point.y), 2, 2);
-        //ctx.fillRect(point.x, point.y, 1, 1);
-        //ctx.arc(point.x, point.y, 1, 0, 2 * Math.PI);
         ctx.stroke();
     }
 

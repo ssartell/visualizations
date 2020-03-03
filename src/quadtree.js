@@ -3,14 +3,60 @@ import Rectangle from './rectangle.js';
 import { MinHeap } from 'mnemonist';
 import PriorityQueue from 'fastpriorityqueue';
 
+let maxSEval = 0;
+let maxPEval = 0;
+
 export default class Quadtree {
     constructor(rect) {
         this.root = new Square(rect, 1);
         this.depth = 1;
     }
 
+    log() {
+        console.log(`${maxSEval},${maxPEval}`);
+    }
+
     add(point) {
         this.depth = Math.max(this.depth, this.root.add(point));
+    }
+
+    anyPointWithin(point, radius) {
+        let pEval = 0;
+        let sEval = 0;
+        let sqrRadius = radius * radius;
+        let bounds = new Rectangle(point.x - radius, point.y - radius, 2 * radius, 2 * radius);
+        let squares = [this.root];
+
+        for(let i = 0; i < this.depth; i++) {
+            for(let square of squares) {
+                pEval++;
+                if (square.hasPoint() 
+                && bounds.contains(square.point) 
+                && square.point.sqrDistanceFrom(point) < sqrRadius) {
+                    maxPEval = Math.max(maxPEval, pEval);
+                    maxSEval = Math.max(maxSEval, sEval);
+                    return true;
+                }
+            }
+
+            let newSquares = [];
+            for(let square of squares) {
+                if (!square.isLeaf()) {
+                    for(let child of square.children) {
+                        sEval++;
+                        if (bounds.isOverlapping(child.bounds)) {
+                            newSquares.push(child);
+                        }
+                    }
+                }                
+            }
+            squares = newSquares;
+
+            if (squares.length === 0) break
+        }
+        maxPEval = Math.max(maxPEval, pEval);
+        maxSEval = Math.max(maxSEval, sEval);
+        return false;
     }
 
     findNearestNeighbor(point) {
@@ -42,7 +88,6 @@ export default class Quadtree {
             squares = newSquares;
             if (squares.length === 0) break;
         }
-
         return closest;
     }
 

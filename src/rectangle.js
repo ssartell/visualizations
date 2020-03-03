@@ -16,6 +16,11 @@ export default class Rectangle {
             && this.y <= point.y && point.y <= this.y + this.height;
     }
 
+    isOverlapping(rect) {
+        return this.x < rect.x + rect.width && rect.x < this.x + this.width
+            && this.y < rect.y + rect.height && rect.y < this.y + this.height;
+    }
+
     distanceFrom(point) {
         return Math.sqrt(this.sqrDistanceFrom(point));
     }
