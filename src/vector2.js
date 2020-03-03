@@ -36,6 +36,10 @@ export default class Vector2 {
         return Math.abs(this.x - point.x) + Math.abs(this.y - point.y);
     }
 
+    asArray() {
+        return [this.x, this.y];
+    }
+
     get sqrMagnitude() {
         return this.x * this.x + this.y * this.y;
     }

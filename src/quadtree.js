@@ -3,17 +3,10 @@ import Rectangle from './rectangle.js';
 import { MinHeap } from 'mnemonist';
 import PriorityQueue from 'fastpriorityqueue';
 
-let maxSEval = 0;
-let maxPEval = 0;
-
 export default class Quadtree {
     constructor(rect) {
         this.root = new Square(rect, 1);
         this.depth = 1;
-    }
-
-    log() {
-        console.log(`${maxSEval},${maxPEval}`);
     }
 
     add(point) {
@@ -21,8 +14,6 @@ export default class Quadtree {
     }
 
     anyPointWithin(point, radius) {
-        let pEval = 0;
-        let sEval = 0;
         let sqrRadius = radius * radius;
         let bounds = new Rectangle(point.x - radius, point.y - radius, 2 * radius, 2 * radius);
         let squares = [this.root];
@@ -32,20 +23,16 @@ export default class Quadtree {
 
             for(let i = 0; i < squares.length; i++) {
                 let square = squares[i];
-                pEval++;
 
                 if (square.hasPoint() 
                 && bounds.contains(square.point) 
                 && square.point.sqrDistanceFrom(point) < sqrRadius) {
-                    maxPEval = Math.max(maxPEval, pEval);
-                    maxSEval = Math.max(maxSEval, sEval);
                     return true;
                 }
 
                 if (!square.isLeaf()) {
                     for(let j = 0; j < square.children.length; j++) {
                         let child = square.children[j];
-                        sEval++;
                         if (bounds.isOverlapping(child.bounds)) {
                             newSquares.push(child);
                         }
@@ -56,8 +43,6 @@ export default class Quadtree {
 
             if (squares.length === 0) break;
         }
-        maxPEval = Math.max(maxPEval, pEval);
-        maxSEval = Math.max(maxSEval, sEval);
         return false;
     }
 
@@ -92,39 +77,6 @@ export default class Quadtree {
         return closest;
     }
 
-    // findNearestNeighbor(point) {
-    //     return this.findNearestNeighbors(point).next().value;
-    // }
-
-    // findNearestNeighbor(point) {
-    //     let queue = new PriorityQueue((a, b) => a.sqrDistanceFrom(point) < b.sqrDistanceFrom(point));
-    //     queue.add(this.root);
-
-    //     while(queue.peek()) {
-    //         let element = queue.poll();
-    //         if (element instanceof Square) {
-    //             if (element.point) queue.add(element.point);
-    //             if (element.isLeaf()) continue;
-
-    //             for(let child of element.children) {
-    //                 queue.add(child);
-    //             }
-    //         } else if (element instanceof Vector2) {                   
-    //             return element;
-    //         }
-    //     }
-    // }
-
-    // findNearestNeighborInner(point, square) {
-    //     if (square.isLeaf()) {
-    //         if (square.point.manhattanDistanceFrom(point) < best) {
-                
-    //         }
-    //     } else {
-
-    //     }
-    // }
-
     findNearestKNeighbors(point, k) {
         let i = 0;
         let neighbors = [];
@@ -137,8 +89,6 @@ export default class Quadtree {
 
         return neighbors;
     }
-
-
 
     *findNearestNeighbors(point) {
         let queue = new PriorityQueue((a, b) => a.sqrDistanceFrom(point) < b.sqrDistanceFrom(point));
@@ -158,25 +108,6 @@ export default class Quadtree {
             }
         }
     }
-
-    // *findNearestNeighbors(point) {
-    //     let queue = new MinHeap((a, b) => a.sqrDistanceFrom(point) - b.sqrDistanceFrom(point));
-    //     queue.push(this.root);
-
-    //     while(queue.peek()) {
-    //         let element = queue.pop();
-    //         if (element instanceof Square) {
-    //             if (element.point) queue.push(element.point);
-    //             if (element.isLeaf()) continue;
-
-    //             for(let child of element.children) {
-    //                 queue.push(child);
-    //             }
-    //         } else if (element instanceof Vector2) {                   
-    //             yield element;
-    //         }
-    //     }
-    // }
 
     draw(ctx) {
         this.root.draw(ctx);
@@ -221,7 +152,7 @@ class Square {
     }
 
     isLeaf() {
-        return !this.children;
+        return this.children === undefined;
     }
 
     findSquare(point) {

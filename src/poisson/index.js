@@ -44,18 +44,17 @@ function update() {
     } else {
         console.log(`points: ${drawn}`);
         console.log(`time: ${Math.round(performance.now() - timeStamp)}ms`);
-        poisson.quadtree.log();
     }
 }
 
 function draw() {
     let ctx = canvas.getContext('2d');
+    ctx.beginPath();
     for(let i = drawn; i < poisson.points.length; i++) {
         let point = poisson.points[i];
-        ctx.beginPath();
         ctx.fillRect(Math.floor(point.x), Math.floor(point.y), 2, 2);
-        ctx.stroke();
     }
+    ctx.stroke();
 
     drawn = poisson.points.length;
 }
