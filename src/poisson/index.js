@@ -3,6 +3,7 @@ import Rectangle from '../rectangle';
 import Quadtree from '../quadtree';
 import Poisson from './poisson';
 import PoissonGrid from './poissonGrid';
+import Delaunator from 'delaunator';
 
 let canvas = document.getElementById('canvas');
 let drawn = 0;
@@ -27,7 +28,7 @@ function init() {
     ctx.scale(scale, scale);
     
     bounds = new Rectangle(0, 0, width, height);
-    poisson = new Poisson(5, bounds);
+    poisson = new Poisson(8, bounds);
     drawn = 0;
     window.requestAnimationFrame(update);
 }
@@ -44,6 +45,7 @@ function update() {
     } else {
         console.log(`points: ${drawn}`);
         console.log(`time: ${Math.round(performance.now() - timeStamp)}ms`);
+        drawDelaunayTriangulation();
     }
 }
 
@@ -57,4 +59,19 @@ function draw() {
     ctx.stroke();
 
     drawn = poisson.points.length;
+}
+
+function drawDelaunayTriangulation() {
+    let points = poisson.points.map(x => x.toArray());
+    let delaunator = Delaunator.from(points);
+    let triangles = delaunator.triangles;
+    let ctx = canvas.getContext('2d');
+    for (let i = 0; i < triangles.length; i += 3) {
+        ctx.beginPath();
+        ctx.moveTo(points[triangles[i]][0], points[triangles[i]][1]);
+        ctx.lineTo(points[triangles[i+1]][0], points[triangles[i+1]][1]);
+        ctx.lineTo(points[triangles[i+2]][0], points[triangles[i+2]][1]);
+        ctx.lineTo(points[triangles[i]][0], points[triangles[i]][1]);
+        ctx.stroke();
+    }
 }

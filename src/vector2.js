@@ -36,7 +36,7 @@ export default class Vector2 {
         return Math.abs(this.x - point.x) + Math.abs(this.y - point.y);
     }
 
-    asArray() {
+    toArray() {
         return [this.x, this.y];
     }
 

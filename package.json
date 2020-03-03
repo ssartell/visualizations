@@ -27,6 +27,7 @@
     "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
+    "delaunator": "^4.0.1",
     "fastpriorityqueue": "^0.6.3",
     "mnemonist": "^0.32.0",
     "npm": "^6.14.1"
