@@ -13,6 +13,15 @@ export default class Poisson {
         this.spawnPoints = [startingPoint];
         this.quadtree = new Quadtree(bounds);
         this.quadtree.add(startingPoint);
+
+        this.xs = [];
+        this.ys = [];
+        for(let i = 0; i < 1000; i++) {
+            let angle = 2 * Math.PI * Math.random();
+            let radius = this.radius * (1 + Math.random());
+            this.xs.push(radius * Math.cos(angle));
+            this.ys.push(radius * Math.sin(angle));
+        }
     }
 
     canExpand() {
@@ -26,9 +35,12 @@ export default class Poisson {
             let spawn = this.spawnPoints.shift();
 
             for (let j = 0; j < 30; j++) {
-                let angle = 2 * Math.PI * Math.random();
-                let radius = this.radius * (1 + Math.random());
-                let candidate = new Vector2(radius * Math.cos(angle) + spawn.x, radius * Math.sin(angle) + spawn.y);
+                // let angle = 2 * Math.PI * Math.random();
+                // let radius = this.radius * (1 + Math.random());
+                // let candidate = new Vector2(radius * Math.cos(angle) + spawn.x, radius * Math.sin(angle) + spawn.y);
+
+                let i = Math.floor(1000 * Math.random());
+                let candidate = new Vector2(this.xs[i] + spawn.x, this.ys[i] + spawn.y);
 
                 if (this.isValid(candidate)) {
                     this.points.push(candidate);

@@ -17,8 +17,8 @@ export default class Rectangle {
     }
 
     isOverlapping(rect) {
-        return this.x < rect.x + rect.width && rect.x < this.x + this.width
-            && this.y < rect.y + rect.height && rect.y < this.y + this.height;
+        return this.x <= rect.x + rect.width && rect.x <= this.x + this.width
+            && this.y <= rect.y + rect.height && rect.y <= this.y + this.height;
     }
 
     distanceFrom(point) {

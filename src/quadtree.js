@@ -27,9 +27,13 @@ export default class Quadtree {
         let bounds = new Rectangle(point.x - radius, point.y - radius, 2 * radius, 2 * radius);
         let squares = [this.root];
 
-        for(let i = 0; i < this.depth; i++) {
-            for(let square of squares) {
+        for(let d = 0; d < this.depth; d++) {
+            let newSquares = [];
+
+            for(let i = 0; i < squares.length; i++) {
+                let square = squares[i];
                 pEval++;
+
                 if (square.hasPoint() 
                 && bounds.contains(square.point) 
                 && square.point.sqrDistanceFrom(point) < sqrRadius) {
@@ -37,22 +41,20 @@ export default class Quadtree {
                     maxSEval = Math.max(maxSEval, sEval);
                     return true;
                 }
-            }
 
-            let newSquares = [];
-            for(let square of squares) {
                 if (!square.isLeaf()) {
-                    for(let child of square.children) {
+                    for(let j = 0; j < square.children.length; j++) {
+                        let child = square.children[j];
                         sEval++;
                         if (bounds.isOverlapping(child.bounds)) {
                             newSquares.push(child);
                         }
                     }
-                }                
+                } 
             }
             squares = newSquares;
 
-            if (squares.length === 0) break
+            if (squares.length === 0) break;
         }
         maxPEval = Math.max(maxPEval, pEval);
         maxSEval = Math.max(maxSEval, sEval);
@@ -64,8 +66,9 @@ export default class Quadtree {
         let closestDist = Infinity;
         let closest = null;
 
-        for(let i = 0; i < this.depth; i++) {
-            for(let square of squares) {
+        for(let d = 0; d < this.depth; d++) {
+            for(let i = 0; i < squares.length; i++) {
+                let square = squares[i];
                 if (square.hasPoint()) {
                     let dist = square.point.sqrDistanceFrom(point);
                     if (dist < closestDist) {
@@ -73,18 +76,16 @@ export default class Quadtree {
                         closest = square.point;
                     }
                 }
-            }
 
-            let newSquares = [];
-            for(let square of squares) {
                 if (!square.isLeaf()) {
                     for(let child of square.children) {
                         if (child.sqrDistanceFrom(point) <= closestDist) {
                             newSquares.push(child);
                         }
                     }
-                }                
+                }
             }
+            
             squares = newSquares;
             if (squares.length === 0) break;
         }

@@ -29,18 +29,18 @@ function init() {
     bounds = new Rectangle(0, 0, width, height);
     poisson = new Poisson(5, bounds);
     drawn = 0;
-    window.requestAnimationFrame(expand);
+    window.requestAnimationFrame(update);
 }
 
-function expand() {
+function update() {
     let count = 0;
-    while(poisson.canExpand() && count < 100) {
+    while(poisson.canExpand() && count < 500) {
         poisson.expand();
         count++;
     }
     draw();
     if (poisson.canExpand()) {
-        window.requestAnimationFrame(expand);
+        window.requestAnimationFrame(update);
     } else {
         console.log(`points: ${drawn}`);
         console.log(`time: ${Math.round(performance.now() - timeStamp)}ms`);
