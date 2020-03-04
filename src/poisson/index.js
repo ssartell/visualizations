@@ -28,7 +28,7 @@ function init() {
     ctx.scale(scale, scale);
     
     bounds = new Rectangle(0, 0, width, height);
-    poisson = new Poisson(8, bounds);
+    poisson = new Poisson(2, bounds);
     drawn = 0;
     window.requestAnimationFrame(update);
 }
@@ -45,7 +45,7 @@ function update() {
     } else {
         console.log(`points: ${drawn}`);
         console.log(`time: ${Math.round(performance.now() - timeStamp)}ms`);
-        drawDelaunayTriangulation();
+        //drawDelaunayTriangulation();
     }
 }
 
