@@ -35,7 +35,7 @@ function init() {
 
 function update() {
     let count = 0;
-    while(poisson.canExpand() && count < 500) {
+    while(poisson.canExpand() && count < 200) {
         poisson.expand();
         count++;
     }
@@ -51,12 +51,12 @@ function update() {
 
 function draw() {
     let ctx = canvas.getContext('2d');
-    ctx.beginPath();
+    //ctx.beginPath();
     for(let i = drawn; i < poisson.points.length; i++) {
         let point = poisson.points[i];
-        ctx.fillRect(Math.floor(point.x), Math.floor(point.y), 2, 2);
+        ctx.fillRect(Math.floor(point[0]), Math.floor(point[1]), 2, 2);
     }
-    ctx.stroke();
+    //ctx.stroke();
 
     drawn = poisson.points.length;
 }

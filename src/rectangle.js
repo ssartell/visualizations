@@ -1,4 +1,4 @@
-import Vector2 from './vector2.js';
+import { vec2 } from 'gl-matrix';
 
 export default class Rectangle {
     constructor(x, y, width, height) {
@@ -8,12 +8,12 @@ export default class Rectangle {
         this.height = height;
         this.halfWidth = width / 2;
         this.halfHeight = height / 2;
-        this.center = new Vector2(this.x + this.halfWidth, this.y + this.halfHeight);
+        this.center = vec2.fromValues(this.x + this.halfWidth, this.y + this.halfHeight);
     }
 
     contains(point) {
-        return this.x <= point.x && point.x <= this.x + this.width 
-            && this.y <= point.y && point.y <= this.y + this.height;
+        return this.x <= point[0] && point[0] <= this.x + this.width 
+            && this.y <= point[1] && point[1] <= this.y + this.height;
     }
 
     isOverlapping(rect) {
@@ -26,8 +26,8 @@ export default class Rectangle {
     }
 
     sqrDistanceFrom(point) {
-        let px = Math.max(0, Math.abs(point.x - this.center.x) - this.halfWidth);
-        let py = Math.max(0, Math.abs(point.y - this.center.y) - this.halfHeight);
+        let px = Math.max(0, Math.abs(point[0] - this.center[0]) - this.halfWidth);
+        let py = Math.max(0, Math.abs(point[1] - this.center[1]) - this.halfHeight);
         return px * px + py * py;
     }
 }

@@ -1,58 +1,58 @@
-export default class Vector2 {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
+// export default class Vector2 {
+//     constructor(x, y) {
+//         this.x = x;
+//         this.y = y;
+//     }
 
-    static from(vec) {
-        return new Vector2(vec.x, vec.y);
-    }
+//     static from(vec) {
+//         return new Vector2(vec.x, vec.y);
+//     }
 
-    static zero() {
-        return new Vector2(0, 0);
-    }
+//     static zero() {
+//         return new Vector2(0, 0);
+//     }
 
-    add(vec) {
-        return new Vector2(this.x + vec.x, this.y + vec.y);
-    }
+//     add(vec) {
+//         return new Vector2(this.x + vec.x, this.y + vec.y);
+//     }
 
-    subtract(vec) {
-        return new Vector2(this.x - vec.x, this.y - vec.y);
-    }
+//     subtract(vec) {
+//         return new Vector2(this.x - vec.x, this.y - vec.y);
+//     }
 
-    scale(scalar) {
-        return new Vector2(this.x * scalar, this.y * scalar);
-    }
+//     scale(scalar) {
+//         return new Vector2(this.x * scalar, this.y * scalar);
+//     }
 
-    sqrDistanceFrom(point) {
-        return this.subtract(point).sqrMagnitude;
-    }
+//     sqrDistanceFrom(point) {
+//         return this.subtract(point).sqrMagnitude;
+//     }
 
-    distanceFrom(point) {
-        return this.subtract(point).magnitude;
-    }
+//     distanceFrom(point) {
+//         return this.subtract(point).magnitude;
+//     }
 
-    manhattanDistanceFrom(point) {
-        return Math.abs(this.x - point.x) + Math.abs(this.y - point.y);
-    }
+//     manhattanDistanceFrom(point) {
+//         return Math.abs(this.x - point.x) + Math.abs(this.y - point.y);
+//     }
 
-    toArray() {
-        return [this.x, this.y];
-    }
+//     toArray() {
+//         return [this.x, this.y];
+//     }
 
-    get sqrMagnitude() {
-        return this.x * this.x + this.y * this.y;
-    }
+//     get sqrMagnitude() {
+//         return this.x * this.x + this.y * this.y;
+//     }
 
-    get magnitude() {
-        return Math.sqrt(this.sqrMagnitude);
-    }
+//     get magnitude() {
+//         return Math.sqrt(this.sqrMagnitude);
+//     }
 
-    get normalized() {
-        return Vector2.from(this).scale(1 / this.magnitude);
-    }
+//     get normalized() {
+//         return Vector2.from(this).scale(1 / this.magnitude);
+//     }
 
-    get abs() {
-        return new Vector2(Math.abs(this.x), Math.abs(this.y));
-    }
-}
+//     get abs() {
+//         return new Vector2(Math.abs(this.x), Math.abs(this.y));
+//     }
+// }

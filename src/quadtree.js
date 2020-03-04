@@ -1,7 +1,7 @@
-import Vector2 from './vector2.js';
 import Rectangle from './rectangle.js';
 import { MinHeap } from 'mnemonist';
 import PriorityQueue from 'fastpriorityqueue';
+import { vec2 } from 'gl-matrix';
 
 export default class Quadtree {
     constructor(rect) {
@@ -15,7 +15,7 @@ export default class Quadtree {
 
     anyPointWithin(point, radius) {
         let sqrRadius = radius * radius;
-        let bounds = new Rectangle(point.x - radius, point.y - radius, 2 * radius, 2 * radius);
+        let bounds = new Rectangle(point[0] - radius, point[1] - radius, 2 * radius, 2 * radius);
         let squares = [this.root];
 
         for(let d = 0; d < this.depth; d++) {
@@ -25,8 +25,8 @@ export default class Quadtree {
                 let square = squares[i];
 
                 if (square.hasPoint() 
-                && bounds.contains(square.point) 
-                && square.point.sqrDistanceFrom(point) < sqrRadius) {
+                && bounds.contains(square.point)
+                && vec2.squaredDistance(square.point, point) < sqrRadius) {
                     return true;
                 }
 
@@ -103,7 +103,7 @@ export default class Quadtree {
                 for(let child of element.children) {
                     queue.add(child);
                 }
-            } else if (element instanceof Vector2) {                   
+            } else {                   
                 yield element;
             }
         }
@@ -122,10 +122,6 @@ class Square {
 
     contains(point) {
         return this.bounds.contains(point);
-    }
-
-    distanceFrom(point) {
-        return this.bounds.distanceFrom(point);
     }
 
     sqrDistanceFrom(point) {

@@ -1,6 +1,6 @@
-import Vector2 from '../vector2';
 import Rectangle from '../rectangle';
 import Quadtree from '../quadtree';
+import { vec2 } from 'gl-matrix';
 
 export default class Poisson {
     constructor(radius, bounds) {
@@ -8,19 +8,17 @@ export default class Poisson {
         this.sqrRadius = radius * radius;
         this.bounds = bounds;
 
-        let startingPoint = new Vector2(bounds.width / 2, bounds.height / 2);
+        let startingPoint = vec2.fromValues(bounds.width / 2, bounds.height / 2);
         this.points = [startingPoint];
         this.spawnPoints = [startingPoint];
         this.quadtree = new Quadtree(bounds);
         this.quadtree.add(startingPoint);
 
-        this.xs = [];
-        this.ys = [];
+        this.deltas = [];
         for(let i = 0; i < 1000; i++) {
             let angle = 2 * Math.PI * Math.random();
             let radius = this.radius * (1 + Math.random());
-            this.xs.push(radius * Math.cos(angle));
-            this.ys.push(radius * Math.sin(angle));
+            this.deltas.push(vec2.fromValues(radius * Math.cos(angle), radius * Math.sin(angle)));
         }
     }
 
@@ -30,6 +28,7 @@ export default class Poisson {
 
     expand() {
         let candidateAccepted = false;
+        let candidate = vec2.create();
 
         while (!candidateAccepted && this.canExpand()) {
             let spawn = this.spawnPoints.shift();
@@ -40,12 +39,13 @@ export default class Poisson {
                 // let candidate = new Vector2(radius * Math.cos(angle) + spawn.x, radius * Math.sin(angle) + spawn.y);
 
                 let i = Math.floor(1000 * Math.random());
-                let candidate = new Vector2(this.xs[i] + spawn.x, this.ys[i] + spawn.y);
+                vec2.add(candidate, this.deltas[i], spawn);
 
                 if (this.isValid(candidate)) {
-                    this.points.push(candidate);
-                    this.spawnPoints.push(candidate);
-                    this.quadtree.add(candidate);
+                    let point = vec2.clone(candidate);
+                    this.points.push(point);
+                    this.spawnPoints.push(point);
+                    this.quadtree.add(point);
                     candidateAccepted = true;
                 }
             }
@@ -56,9 +56,5 @@ export default class Poisson {
         if (!this.bounds.contains(candidate)) return false;
         
         return !this.quadtree.anyPointWithin(candidate, this.radius);
-        //let nearestPoint = this.quadtree.findNearestNeighbor(candidate);
-        //let sqrDist = nearestPoint.subtract(candidate).sqrMagnitude;
-        
-        //return sqrDist > this.sqrRadius;
     }
 }
