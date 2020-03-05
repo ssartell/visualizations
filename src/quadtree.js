@@ -158,13 +158,14 @@ class Square {
     }
 
     split() {
-        let width = this.bounds.width / 2;
-        let height = this.bounds.height / 2;
+        let width = this.bounds.halfWidth;
+        let height = this.bounds.halfHeight;
+        let depth = this.depth + 1;
         return [
-            new Square(new Rectangle(this.bounds.x, this.bounds.y, width, height), this.depth + 1),
-            new Square(new Rectangle(this.bounds.x + width, this.bounds.y, width, height), this.depth + 1),
-            new Square(new Rectangle(this.bounds.x, this.bounds.y + height, width, height), this.depth + 1),
-            new Square(new Rectangle(this.bounds.x + width, this.bounds.y + height, width, height), this.depth + 1),
+            new Square(new Rectangle(this.bounds.x, this.bounds.y, width, height), depth),
+            new Square(new Rectangle(this.bounds.center[0], this.bounds.y, width, height), depth),
+            new Square(new Rectangle(this.bounds.x, this.bounds.center[1], width, height), depth),
+            new Square(new Rectangle(this.bounds.center[0], this.bounds.center[1], width, height), depth),
         ];
     }
 

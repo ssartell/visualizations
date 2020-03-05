@@ -34,12 +34,12 @@ export default class Poisson {
             let spawn = this.spawnPoints.shift();
 
             for (let j = 0; j < 30; j++) {
-                // let angle = 2 * Math.PI * Math.random();
-                // let radius = this.radius * (1 + Math.random());
-                // let candidate = new Vector2(radius * Math.cos(angle) + spawn.x, radius * Math.sin(angle) + spawn.y);
+                let angle = 2 * Math.PI * Math.random();
+                let radius = this.radius * (1 + Math.random());
+                vec2.set(candidate, spawn[0] + radius * Math.cos(angle), spawn[1] + radius * Math.sin(angle));
 
-                let i = Math.floor(1000 * Math.random());
-                vec2.add(candidate, this.deltas[i], spawn);
+                //let i = Math.floor(1000 * Math.random());
+                //vec2.add(candidate, this.deltas[i], spawn);
 
                 if (this.isValid(candidate)) {
                     let point = vec2.clone(candidate);

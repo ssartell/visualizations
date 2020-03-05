@@ -8,7 +8,7 @@ export default class PoissonGrid {
         this.cellSize = radius / Math.sqrt(2);
         this.bounds = bounds;
 
-        let startingPoint = new Vector2(bounds.width / 2, bounds.height / 2);
+        let startingPoint = new Vector2(bounds.halfWidth, bounds.halfHeight);
         this.points = [startingPoint];
         this.spawnPoints = [startingPoint];
 

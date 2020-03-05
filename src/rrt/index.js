@@ -1,6 +1,5 @@
 import Vector2 from '../vector2';
 import Rrt from './rapidly-exploring-random-tree';
-import { Vector } from 'mnemonist';
 
 let canvas = document.getElementById('canvas');
 

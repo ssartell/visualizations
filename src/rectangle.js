@@ -3,7 +3,9 @@ import { vec2 } from 'gl-matrix';
 export default class Rectangle {
     constructor(x, y, width, height) {
         this.x = x;
+        this.x2 = x + width;
         this.y = y;
+        this.y2 = y + height;
         this.width = width;
         this.height = height;
         this.halfWidth = width / 2;
@@ -12,13 +14,13 @@ export default class Rectangle {
     }
 
     contains(point) {
-        return this.x <= point[0] && point[0] <= this.x + this.width 
-            && this.y <= point[1] && point[1] <= this.y + this.height;
+        return this.x <= point[0] && point[0] <= this.x2 
+            && this.y <= point[1] && point[1] <= this.y2;
     }
 
     isOverlapping(rect) {
-        return this.x <= rect.x + rect.width && rect.x <= this.x + this.width
-            && this.y <= rect.y + rect.height && rect.y <= this.y + this.height;
+        return this.x <= rect.x2 && rect.x <= this.x2
+            && this.y <= rect.y2 && rect.y <= this.y2;
     }
 
     distanceFrom(point) {
