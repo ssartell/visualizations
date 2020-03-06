@@ -4,8 +4,8 @@ import Quadtree from '../quadtree';
 import Poisson from './poisson';
 import PoissonGrid from './poissonGrid';
 import Delaunator from 'delaunator';
-import perlinNoise from '../perlin-noise';
-import { vec2 } from 'gl-matrix';
+import { perlin2d, perlin3d } from '../perlin-noise';
+import { vec2, vec3, mat4 } from 'gl-matrix';
 
 let canvas = document.getElementById('canvas');
 let drawn = 0;
@@ -30,7 +30,7 @@ function init() {
     ctx.scale(scale, scale);
 
     bounds = new Rectangle(0, 0, width, height);
-    poisson = new Poisson(10, bounds);
+    poisson = new Poisson(20, bounds);
     drawn = 0;
     window.requestAnimationFrame(update);
 }
@@ -68,7 +68,13 @@ function drawDelaunayTriangulation() {
     let points = poisson.points;
     let delaunay = Delaunator.from(points);
     //forEachTriangeEdge(points, deluanay, drawEdge);
-    forEachTriange(points, delaunay, drawTriangle);
+    window.requestAnimationFrame(drawMore);
+
+    function drawMore() {
+        z += .05;
+        forEachTriange(points, delaunay, drawTriangle);
+        window.requestAnimationFrame(drawMore);
+    }
 }
 
 function drawEdge(a, b) {
@@ -79,14 +85,29 @@ function drawEdge(a, b) {
     ctx.stroke();
 }
 
-const scale = 6;
+const scale = 5;
+let z = 0;
+let mat = mat4.create();
+let axis = vec3.fromValues(.5,.8,.5);
+vec3.normalize(axis, axis);
+mat4.fromRotation(mat, .5, axis);
+
 function drawTriangle(a, b, c) {
     //let color = Math.floor(Math.random() * 256);
     //let color = Math.floor(a[0] / window.innerWidth * 256);
     let vec = vec2.create();
-    vec2.scale(vec, a, 1 / window.innerWidth);
+    vec2.add(vec, a, b);
+    vec2.add(vec, vec, c);
+    vec2.scale(vec, vec, 1 / 3);
+    vec2.scale(vec, vec, 1 / window.innerWidth);
     vec2.scale(vec, vec, scale);
-    let color = Math.floor(perlinNoise(vec) * 256);
+    let centroid = vec3.fromValues(vec[0], vec[1], z);
+    vec3.add(centroid, centroid, vec3.fromValues(9999, 9999, 9999));
+    vec3.transformMat4(centroid, centroid, mat);
+    
+    //let color = Math.floor(perlin2d(vec) * 256);
+    let color = Math.floor(perlin3d(centroid) * 256);
+    //let color = Math.floor(shade(a, b, c) * 256);
     let ctx = canvas.getContext('2d');
     ctx.fillStyle = `rgba(${color}, ${color}, ${color}, 1)`;
     ctx.beginPath();
@@ -94,7 +115,27 @@ function drawTriangle(a, b, c) {
     ctx.lineTo(b[0], b[1]);
     ctx.lineTo(c[0], c[1]);
     ctx.fill();
-    ctx.stroke();
+    //ctx.stroke();
+}
+
+function getHeight(vec) {
+    let temp = vec2.create();
+    vec2.scale(temp, vec, 1 / window.innerWidth);
+    vec2.scale(temp, temp, scale);
+    return perlin2d(temp) * 500;
+}
+
+const sun = vec3.fromValues(0, 1, 0);
+function shade(a, b, c) {
+    a = vec3.fromValues(a[0], getHeight(a), a[1]);
+    b = vec3.fromValues(b[0], getHeight(b), b[1]);
+    c = vec3.fromValues(c[0], getHeight(c), c[1]);
+
+    vec3.subtract(b, b, a);
+    vec3.subtract(c, c, a);
+    vec3.cross(a, b, c);
+    vec3.normalize(a, a);
+    return vec3.dot(a, sun);
 }
 
 function nextHalfEdge(e) {
