@@ -85,10 +85,10 @@ function drawEdge(a, b) {
     ctx.stroke();
 }
 
-const scale = 5;
+const scale = 100;
 let z = 0;
 let mat = mat4.create();
-let axis = vec3.fromValues(.5,.8,.5);
+let axis = vec3.fromValues(.5,.8,.15);
 vec3.normalize(axis, axis);
 mat4.fromRotation(mat, .5, axis);
 
